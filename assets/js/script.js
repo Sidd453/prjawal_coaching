@@ -79,45 +79,54 @@ if(track){
   if(tPrev) tPrev.addEventListener('click', ()=> track.scrollBy({left:-cardW(), behavior:'smooth'}));
 }
 
-// ===== Gallery placeholder tiles =====
+// ===== Gallery (real photos) + lightbox =====
 const galleryData = [
-  {label:'Classroom', h:220, c1:'#E50914', c2:'#B4070F'},
-  {label:'Students at Work', h:300, c1:'#075B3A', c2:'#054228'},
-  {label:'Teaching Session', h:200, c1:'#111111', c2:'#2b2b2b'},
-  {label:'Institute Event', h:270, c1:'#075B3A', c2:'#0c3d29'},
-  {label:'Group Activity', h:230, c1:'#E50914', c2:'#8f050c'},
-  {label:'Achievement Day', h:310, c1:'#111111', c2:'#333333'},
-  {label:'Doubt-Solving Session', h:210, c1:'#075B3A', c2:'#054228'},
-  {label:'Batch Photo', h:260, c1:'#E50914', c2:'#B4070F'},
-  {label:'Annual Function', h:240, c1:'#111111', c2:'#2b2b2b'},
-  {label:'Award Ceremony', h:280, c1:'#075B3A', c2:'#0c3d29'},
-  {label:'Practical Class', h:220, c1:'#E50914', c2:'#8f050c'},
-  {label:'Campus View', h:250, c1:'#111111', c2:'#333333'},
+  {src:'assets/images/gallery/photo-09.png', label:'Our Coaching Centre, Akurdi'},
+  {src:'assets/images/gallery/photo-01.png', label:'Teaching Session'},
+  {src:'assets/images/gallery/photo-03.png', label:'Patil Ujjwal Coaching Classes'},
+  {src:'assets/images/gallery/photo-06.png', label:'Students at Work'},
+  {src:'assets/images/gallery/photo-02.png', label:'Classroom'},
+  {src:'assets/images/gallery/photo-10.png', label:'Centre Entrance'},
+  {src:'assets/images/gallery/photo-08.png', label:'Exam Practice'},
+  {src:'assets/images/gallery/photo-04.png', label:'Focused Learning'},
+  {src:'assets/images/gallery/photo-07.png', label:'Doubt-Solving Session'},
 ];
 const grid = document.getElementById('galleryGrid');
-const cameraSvg = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>';
-if(grid){
-  galleryData.forEach(g=>{
-    const item = document.createElement('div');
-    item.className='g-item';
-    item.innerHTML = `
-      <div class="ph" style="height:${g.h}px;background:linear-gradient(150deg, ${g.c1}, ${g.c2});">
-        ${cameraSvg}
-        <span>${g.label}</span>
-      </div>
-      <div class="overlay"><span class="view">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-      </span></div>`;
-    item.addEventListener('click', ()=> openLightbox(g.label));
-    grid.appendChild(item);
-  });
-}
 const lightbox = document.getElementById('lightbox');
 const lbTitle = document.getElementById('lbTitle');
-function openLightbox(label){ if(!lightbox) return; lbTitle.textContent = label; lightbox.classList.add('open'); }
+const lbImg = document.getElementById('lbImg');
+let lbIndex = 0;
+function showLightbox(i){
+  lbIndex = (i + galleryData.length) % galleryData.length;
+  lbImg.src = galleryData[lbIndex].src; lbImg.alt = galleryData[lbIndex].label;
+  lbTitle.textContent = galleryData[lbIndex].label;
+  lightbox.classList.add('open');
+}
+if(grid){
+  galleryData.forEach((g,i)=>{
+    const item = document.createElement('div');
+    item.className='g-item reveal';
+    item.innerHTML = `<img class="real" src="${g.src}" alt="${g.label}" loading="lazy">
+      <div class="overlay"><span class="view"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
+      <div class="cap">${g.label}</div>`;
+    item.addEventListener('click', ()=> showLightbox(i));
+    grid.appendChild(item);
+    io.observe(item);
+  });
+}
 const lbClose = document.getElementById('lbClose');
-if(lbClose) lbClose.addEventListener('click', ()=> lightbox.classList.remove('open'));
-if(lightbox) lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) lightbox.classList.remove('open'); });
+if(lightbox){
+  lbClose.addEventListener('click', ()=> lightbox.classList.remove('open'));
+  lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) lightbox.classList.remove('open'); });
+  document.getElementById('lbPrev').addEventListener('click', ()=> showLightbox(lbIndex-1));
+  document.getElementById('lbNext').addEventListener('click', ()=> showLightbox(lbIndex+1));
+  document.addEventListener('keydown', (e)=>{
+    if(!lightbox.classList.contains('open')) return;
+    if(e.key==='Escape') lightbox.classList.remove('open');
+    if(e.key==='ArrowLeft') showLightbox(lbIndex-1);
+    if(e.key==='ArrowRight') showLightbox(lbIndex+1);
+  });
+}
 
 // ===== Contact form validation + fake submit states =====
 const form = document.getElementById('enquiryForm');
@@ -160,3 +169,102 @@ if(form){
     }, 1200);
   });
 }
+
+
+// ===== Home testimonials: auto-scroll + drag/swipe + arrows, seamless loop =====
+(function(){
+  const track = document.getElementById('tmTrack');
+  if(!track) return;
+  const originals = Array.from(track.children);
+  const N = originals.length;
+  for(let k=0;k<2;k++){
+    originals.forEach(c=>{ const cl = c.cloneNode(true); cl.setAttribute('aria-hidden','true'); track.appendChild(cl); });
+  }
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPEED = 0.045;            // px per ms  (~45px/sec) — gentle, readable
+  let setW = 0, pos = 0, paused = false, inView = true, resumeT = null, dragging = false;
+
+  function measure(){
+    const cards = track.children;
+    setW = cards[N].offsetLeft - cards[0].offsetLeft;
+    if(setW > 0 && (track.scrollLeft < setW*0.5 || track.scrollLeft > setW*1.5)){
+      track.scrollLeft = setW + (track.scrollLeft % setW);
+    }
+    pos = track.scrollLeft;
+  }
+  function wrap(){
+    if(!setW) return;
+    const x = track.scrollLeft;
+    if(x < setW*0.5)      track.scrollLeft = x + setW;
+    else if(x > setW*1.5) track.scrollLeft = x - setW;
+  }
+  function pause(){ paused = true; clearTimeout(resumeT); }
+  function resume(delay){
+    clearTimeout(resumeT);
+    resumeT = setTimeout(()=>{ if(dragging) return; pos = track.scrollLeft; paused = false; }, delay);
+  }
+
+  window.addEventListener('load', ()=>{ measure(); track.scrollLeft = setW; pos = setW; });
+  window.addEventListener('resize', measure);
+  measure(); track.scrollLeft = setW; pos = setW;
+
+  let last = performance.now();
+  function tick(now){
+    const dt = Math.min(50, now - last); last = now;
+    if(!paused && !reduce && inView && setW){
+      pos += SPEED * dt;
+      if(pos > setW*1.5) pos -= setW;
+      track.scrollLeft = pos;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // only animate while the section is visible
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(es=>{ inView = es[0].isIntersecting; if(inView) pos = track.scrollLeft; }, {threshold:0})
+      .observe(track);
+  }
+
+  // keep the loop seamless while the user scrolls/swipes manually
+  track.addEventListener('scroll', ()=>{ if(paused) wrap(); }, {passive:true});
+
+  // pause on hover / focus / touch
+  track.addEventListener('mouseenter', pause);
+  track.addEventListener('mouseleave', ()=> resume(500));
+  track.addEventListener('focusin', pause);
+  track.addEventListener('focusout', ()=> resume(500));
+  track.addEventListener('touchstart', pause, {passive:true});
+  track.addEventListener('touchend', ()=> resume(2500), {passive:true});
+  track.addEventListener('wheel', ()=>{ pause(); resume(1800); }, {passive:true});
+
+  // mouse drag
+  let startX = 0, startLeft = 0;
+  track.addEventListener('pointerdown', e=>{
+    if(e.pointerType !== 'mouse') return;
+    dragging = true; pause();
+    startX = e.clientX; startLeft = track.scrollLeft;
+    track.classList.add('dragging'); track.setPointerCapture(e.pointerId);
+  });
+  track.addEventListener('pointermove', e=>{
+    if(!dragging) return;
+    track.scrollLeft = startLeft - (e.clientX - startX);
+  });
+  function endDrag(e){
+    if(!dragging) return;
+    dragging = false; track.classList.remove('dragging');
+    try{ track.releasePointerCapture(e.pointerId); }catch(_){}
+    resume(500);
+  }
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+
+  // arrows
+  function step(){
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 24;
+    return track.children[0].offsetWidth + gap;
+  }
+  const prev = document.getElementById('tmPrev'), next = document.getElementById('tmNext');
+  if(next) next.addEventListener('click', ()=>{ pause(); track.scrollBy({left: step(),  behavior:'smooth'}); resume(2500); });
+  if(prev) prev.addEventListener('click', ()=>{ pause(); track.scrollBy({left: -step(), behavior:'smooth'}); resume(2500); });
+})();

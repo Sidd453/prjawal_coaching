@@ -2,7 +2,7 @@ PATIL UJJWAL COACHING CLASSES — MULTI-PAGE WEBSITE PACKAGE
 ============================================================
 
 WHAT'S INSIDE (real, separate pages — proper routing, not one long page)
-- index.html              -> Home (hero, stats, about preview, courses preview, why choose us, CTA)
+- index.html              -> Home (hero, stats, about preview, how-it-works steps, courses preview, why choose us, testimonials slider, CTA)
 - about.html               -> About Us (full story, our approach, why choose us)
 - courses.html             -> Courses (full 6-program grid)
 - results.html             -> Results & Testimonials
