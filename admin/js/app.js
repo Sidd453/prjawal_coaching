@@ -39,6 +39,7 @@ const renderLogin = () => {
         <div class="field"><label for="password">Password</label><div class="pw"><input id="password" name="password" type="password" autocomplete="current-password" required><button type="button" id="showPw" aria-label="Show password">Show</button></div></div>
         <p class="err-text" id="loginErr" role="alert"></p>
         <button class="btn primary" id="loginBtn">Log in</button>
+        <a class="back-link" href="../index.html">&larr; Back to website</a>
       </form>
     </section>
   </div>`);
@@ -107,7 +108,7 @@ const navigate = async () => {
   catch (err) { page.innerHTML = `<div class="card"><b>Could not load this page.</b><p class="muted">${err.message}</p></div>`; }
 };
 
-const logout = () => { auth.token = null; setUser(null); renderLogin(); };
+const logout = () => { auth.token = null; setUser(null); location.href = '../index.html'; };
 
 window.addEventListener('hashchange', () => user && navigate());
 window.addEventListener('auth:expired', () => { setUser(null); renderLogin(); toast('Session expired. Please log in again.', 'err'); });
