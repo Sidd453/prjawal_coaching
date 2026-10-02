@@ -140,12 +140,24 @@ if(form){
 
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
-    setTimeout(()=>{
-      submitBtn.classList.remove('loading');
-      submitBtn.disabled = false;
-      form.style.display = 'none';
-      successBox.classList.add('show');
-    }, 1200);
+    // API_BASE is empty when the site is served by the backend; set window.API_BASE in a <script> for a separate host.
+    const API_BASE = window.API_BASE || '';
+    fetch(API_BASE + '/api/enquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, email, course, message })
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
+        if(!res.ok) throw new Error(data.message || 'Could not send your enquiry.');
+        form.style.display = 'none';
+        successBox.classList.add('show');
+      })
+      .catch((err) => { alert(err.message + ' Please try again or call us.'); })
+      .finally(() => {
+        submitBtn.classList.remove('loading');
+        submitBtn.disabled = false;
+      });
   });
 }
 
