@@ -60,15 +60,20 @@ if(track){
 
 // ===== Gallery (real photos) + lightbox =====
 const galleryData = [
-  {src:'assets/images/gallery/centre-entrance.jpg', label:'Our Coaching Centre, Akurdi', pos:'center'},
-  {src:'assets/images/gallery/classroom-writing.jpg', label:'Focused Learning', pos:'center'},
-  {src:'assets/images/gallery/teaching-session.jpg', label:'Teaching Session', pos:'center 30%'},
+  // {src:'assets/images/gallery/centre-entrance.jpg', label:'Our Coaching Centre, Sai Nagar, Mamurdi', pos:'center'},
+  // {src:'assets/images/gallery/classroom-writing.jpg', label:'Focused Learning', pos:'center'},
+  // {src:'assets/images/gallery/teaching-session.jpg', label:'Teaching Session', pos:'center 30%'},
   {src:'assets/images/gallery/students-listening.jpg', label:'Attentive Students', pos:'center'},
-  {src:'assets/images/gallery/exam-supervision.jpg', label:'Exam Practice', pos:'center'},
-  {src:'assets/images/gallery/director.jpg', label:'Patil Ujjwal Sir', pos:'center 40%'},
+  // {src:'assets/images/gallery/exam-supervision.jpg', label:'Exam Practice', pos:'center'},
+  // {src:'assets/images/gallery/director.jpg', label:'Patil Ujjwal Sir', pos:'center 40%'},
   {src:'assets/images/gallery/exam-row.jpg', label:'Test Day', pos:'center 35%'},
   {src:'assets/images/gallery/exam-hall.jpg', label:'Guided Test Session', pos:'center'},
   {src:'assets/images/gallery/centre-front.jpg', label:'Centre Front View', pos:'center'},
+  {src:'assets/images/gallery/centre-signboard.jpg', label:'Our Centre: Classes 5th to 12th', pos:'center'},
+  {src:'assets/images/gallery/classroom-banner.jpg', label:'Focused Classroom', pos:'center'},
+  {src:'assets/images/gallery/teaching-podium.jpg', label:'Lecture Session', pos:'center'},
+  {src:'assets/images/gallery/exam-classroom.jpg', label:'Practice Test', pos:'center'},
+  {src:'assets/images/gallery/director-office.jpg', label:'Patil Ujjwal Sir at the Centre', pos:'center 40%'},
 ];
 const grid = document.getElementById('galleryGrid');
 const lightbox = document.getElementById('lightbox');
@@ -85,7 +90,7 @@ if(grid){
   galleryData.forEach((g,i)=>{
     const item = document.createElement('div');
     item.className='g-item reveal';
-    item.innerHTML = `<img class="real" src="${g.src}" alt="${g.label}" style="object-position:${g.pos||'center'}" loading="lazy">
+    item.innerHTML = `<img class="real" src="${g.src}" alt="${g.label}" loading="lazy">
       <div class="overlay"><span class="view"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></span></div>
       <div class="cap">${g.label}</div>`;
     item.addEventListener('click', ()=> showLightbox(i));
