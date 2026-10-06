@@ -26,7 +26,8 @@ let user = null;
 const setUser = (u) => { user = u; session.set(u); };
 
 const renderLogin = () => {
-  mount(root, html`<div class="login">
+  mount(root, html`<button type="button" class="theme-toggle login-theme" data-theme-toggle><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+  <div class="login">
     <section class="login-art">
       <div class="login-brand"><img src="../assets/images/logo-icon.png" alt=""><span>Staff portal</span></div>
       <div><h1>Patil Ujjwal Coaching Classes</h1><p>Attendance, fees and admissions in one place.</p></div>
@@ -77,11 +78,12 @@ const renderShell = async () => {
     <aside class="side" id="side">
       <div class="brand"><img src="../assets/images/logo-icon.png" alt=""><span>Patil Ujjwal<small>Coaching Classes</small></span></div>
       <nav class="nav">${items.map(([key, r]) => html`<a href="#/${key}" data-route="${key}">${icon(r.icon)}${r.label}</a>`)}</nav>
+      <button type="button" class="theme-toggle" data-theme-toggle><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg><span class="tt-label">Dark mode</span><span class="sw" aria-hidden="true"></span></button>
       <div class="side-foot"><b>${user.name}</b><span class="role-chip r-${user.role}">${user.roleLabel}</span><br>
         <button id="pwBtn">Change password</button><br><button id="logoutBtn">Log out</button></div>
     </aside>
     <div class="main">
-      <div class="topbar"><button id="menuBtn" aria-label="Open menu">&#9776;</button><b>Patil Ujjwal</b></div>
+      <div class="topbar"><button id="menuBtn" aria-label="Open menu">&#9776;</button><b>Patil Ujjwal</b><button type="button" class="theme-toggle" data-theme-toggle><svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button></div>
       <main class="page" id="page"></main>
     </div>
   </div>`);

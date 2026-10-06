@@ -33,14 +33,14 @@ export const render = async (page) => {
   const best = months.reduce((b, m) => (m.value > b.value ? m : b), { value: 0 });
 
   const attSegs = [
-    { label: 'Present', value: t.present, color: '#075B3A' }, { label: 'Late', value: t.late, color: '#B7791F' },
-    { label: 'Absent', value: t.absent, color: '#E50914' }, { label: 'On leave', value: t.leave, color: '#5B6472' },
+    { label: 'Present', value: t.present, color: 'var(--chart-green)' }, { label: 'Late', value: t.late, color: 'var(--chart-amber)' },
+    { label: 'Absent', value: t.absent, color: 'var(--chart-red)' }, { label: 'On leave', value: t.leave, color: 'var(--chart-slate)' },
   ];
   const attended = t.present + t.late;
   const attPct = t.marked ? Math.round((attended / t.marked) * 100) : 0;
 
   const paid = f ? f.monthCollection : 0, due = f ? f.totalDue : 0;
-  const feeSegs = [{ label: 'Collected this month', value: paid, color: '#075B3A' }, { label: 'Pending fees', value: due, color: '#E50914' }];
+  const feeSegs = [{ label: 'Collected this month', value: paid, color: 'var(--chart-green)' }, { label: 'Pending fees', value: due, color: 'var(--chart-red)' }];
   const feePct = paid + due ? Math.round((paid / (paid + due)) * 100) : 0;
 
   const bSegs = batchSegments(batches);

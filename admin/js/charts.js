@@ -1,7 +1,7 @@
 // Dependency-free SVG charts (the site's security policy blocks external chart libraries).
 import { esc, raw } from './ui.js';
 
-export const PALETTE = ['#075B3A', '#E50914', '#B7791F', '#2E7D9A', '#7A5AC8', '#5B6472'];
+export const PALETTE = ['var(--chart-green)', 'var(--chart-red)', 'var(--chart-amber)', 'var(--chart-blue)', 'var(--chart-purple)', 'var(--chart-slate)'];
 
 export const short = (n) => {
   n = Number(n) || 0;
@@ -45,7 +45,7 @@ export const areaChart = (points, { format = short } = {}) => {
   const labels = points.map((p, i) => `<text x="${xy[i][0]}" y="${H - 10}" text-anchor="middle" class="c-axis">${esc(p.label)}</text>`).join('');
 
   return raw(`<svg viewBox="0 0 ${W} ${H}" class="chart-svg area" role="img" aria-label="Fee collection trend">
-    <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#075B3A" stop-opacity=".28"/><stop offset="1" stop-color="#075B3A" stop-opacity="0"/></linearGradient></defs>
+    <defs><linearGradient id="gArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-opacity=".28"/><stop offset="1" stop-opacity="0"/></linearGradient></defs>
     ${grid}<path d="${area}" fill="url(#gArea)" class="c-area"/><path d="${line}" class="c-line" pathLength="1"/>${dots}${labels}</svg>`);
 };
 
@@ -56,13 +56,13 @@ export const donut = (segments, { big = '', small = '' } = {}) => {
   const rings = total
     ? segments.filter((g) => g.value > 0).map((g) => {
         const len = (g.value / total) * C, gap = segments.filter((s) => s.value > 0).length > 1 ? 3 : 0;
-        const el = `<circle cx="100" cy="100" r="${R}" fill="none" stroke="${g.color}" stroke-width="${SW}" stroke-dasharray="${Math.max(len - gap, 0.1)} ${C}" stroke-dashoffset="${-off}" class="seg"><title>${esc(g.label)}: ${g.value} (${Math.round((g.value / total) * 100)}%)</title></circle>`;
+        const el = `<circle cx="100" cy="100" r="${R}" fill="none" style="stroke:${g.color}" stroke-width="${SW}" stroke-dasharray="${Math.max(len - gap, 0.1)} ${C}" stroke-dashoffset="${-off}" class="seg"><title>${esc(g.label)}: ${g.value} (${Math.round((g.value / total) * 100)}%)</title></circle>`;
         off += len;
         return el;
       }).join('')
     : '';
   return raw(`<svg viewBox="0 0 200 200" class="chart-svg donut" role="img" aria-label="${esc(small)}">
-    <circle cx="100" cy="100" r="${R}" fill="none" stroke="#EEF1EF" stroke-width="${SW}"/>
+    <circle cx="100" cy="100" r="${R}" fill="none" class="d-track" stroke-width="${SW}"/>
     <g transform="rotate(-90 100 100)">${rings}</g>
     <text x="100" y="${small ? 102 : 110}" text-anchor="middle" class="d-big">${esc(big)}</text>
     ${small ? `<text x="100" y="124" text-anchor="middle" class="d-small">${esc(small)}</text>` : ''}</svg>`);
