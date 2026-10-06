@@ -22,11 +22,9 @@
     sec.parentNode.insertBefore(w,sec);}
   // reveal for anything new
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});$$('.reveal:not(.in)').forEach(function(el){io.observe(el)});
-    // animated counters (500+, 15+ ...)
-    var co=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;co.unobserve(e.target);var el=e.target,m=el.textContent.trim().match(/^(\d+)(\+?)$/);if(!m||reduce)return;var to=+m[1],t0=performance.now();(function f(t){var k=Math.min((t-t0)/1500,1),v=Math.round(to*(1-Math.pow(1-k,3)));el.textContent=v+m[2];if(k<1)requestAnimationFrame(f)})(t0)})},{threshold:.6});
-    $$('.stat b').forEach(function(b){co.observe(b)});}
+}
   // cursor spotlight + gentle tilt on cards
-  $$('.why-card,.course-card,.dir-card,.stat-card,.approach-card').forEach(function(c){
+  $$('.why-card,.course-card,.dir-card,.approach-card').forEach(function(c){
     c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')});});
   // hero parallax
   if(!reduce){var hv=$('.hero-visual');addEventListener('pointermove',function(e){if(!hv||innerWidth<900)return;var x=(e.clientX/innerWidth-.5)*10,y=(e.clientY/innerHeight-.5)*10;hv.style.translate=x+'px '+y+'px'},{passive:true});}

@@ -78,3 +78,8 @@
 @media(max-width:900px){.ph-grid{grid-template-columns:1fr;gap:30px}.ph-visual{transform:none;max-width:560px}.page-banner{padding-bottom:44px}}
 .page-banner .eyebrow{margin-bottom:16px}
 .ph-icon{aspect-ratio:4/3}
+
+/* stats band stays static */
+.stat-card,.stat-card:hover{transform:none!important;box-shadow:none!important;transition:none}
+.stat-card::before{display:none!important}
+.stat-card:hover .stat-ic{transform:none}
