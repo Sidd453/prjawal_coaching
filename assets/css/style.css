@@ -16,7 +16,7 @@
   --radius-md: 14px;
   --ff-head:'Space Grotesk', 'Inter', sans-serif;
   --ff-body:'Inter', sans-serif;
-  --container: 1180px;
+  --container: 1400px;
   --nav-h: 84px;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
@@ -33,8 +33,8 @@ img{max-width:100%; display:block;}
 a{color:inherit; text-decoration:none;}
 button{font-family:inherit; cursor:pointer;}
 ul{list-style:none;}
-.wrap{max-width:var(--container); margin:0 auto; padding:0 32px;}
-@media(max-width:640px){.wrap{padding:0 20px;}}
+.wrap{max-width:var(--container); margin:0 auto; padding:0 28px;}
+@media(max-width:640px){.wrap{padding:0 18px;}}
 
 h1,h2,h3,h4{font-family:var(--ff-head); line-height:1.08; letter-spacing:-0.01em; font-weight:600;}
 .eyebrow{
@@ -659,3 +659,37 @@ footer ul li a.active{color:var(--red);}
 .dir-role{display:block; color:var(--red); font-weight:600; font-size:13.5px; margin-bottom:10px;}
 .dir-card p{color:var(--ink-soft); font-size:14.5px; line-height:1.6;}
 @media(max-width:700px){.dir-grid{grid-template-columns:1fr;}}
+
+/* ===== v4: philosophy, director messages, mission ===== */
+.dir-link{display:inline-block; margin-top:14px; color:var(--green); font-weight:600; font-size:14px; text-decoration:none;}
+.dir-link:hover{color:var(--red); text-decoration:underline;}
+.phil-tags{display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin:-18px auto 34px; max-width:860px;}
+.phil-tags span{font-family:var(--ff-head); font-weight:700; font-size:15px; letter-spacing:.06em; text-transform:uppercase; padding:11px 20px; border-radius:99px; background:#fff; border:1px solid var(--line); color:var(--green-deep);}
+.phil-tags span:nth-child(even){color:var(--red-deep);}
+.phil-copy{max-width:720px; margin:0 auto; text-align:center;}
+.phil-copy p{color:var(--ink-soft); font-size:17px; line-height:1.75; margin-top:14px;}
+.phil-copy .phil-sign{font-family:var(--ff-head); font-weight:700; color:var(--green-deep); font-size:19px; margin-top:24px;}
+.vm-card .vm-tag{font-family:var(--ff-head); font-weight:600; margin-top:18px; font-size:15px; color:#fff; position:relative; z-index:1;}
+.mission-head{margin-top:70px; margin-bottom:40px;}
+.msg-card{max-width:860px; margin:0 auto 34px; background:#fff; border:1px solid var(--line); border-radius:26px; box-shadow:var(--shadow-1); overflow:hidden; scroll-margin-top:calc(var(--nav-h) + 20px);}
+.msg-head{display:flex; align-items:center; gap:18px; padding:22px 28px; background:linear-gradient(150deg,var(--green),var(--green-deep)); color:#fff;}
+.msg-head img{width:76px; height:76px; border-radius:50%; object-fit:cover; object-position:50% 18%; border:3px solid rgba(255,255,255,.55); flex:none;}
+.msg-head h3{font-family:var(--ff-head); font-size:21px; color:#fff;}
+.msg-head span{display:block; font-size:13.5px; color:rgba(255,255,255,.82); margin-top:3px;}
+.msg-body{padding:30px 34px 36px;}
+.msg-body p{color:var(--ink-soft); font-size:16px; line-height:1.8; margin-top:14px;}
+.msg-body p:first-child{margin-top:0;}
+.msg-body strong{color:var(--ink);}
+.msg-sub{font-family:var(--ff-head); font-size:18px; color:var(--red); margin-top:26px;}
+.msg-promise{font-family:var(--ff-head); font-weight:700; font-size:19px !important; color:var(--green-deep) !important; text-align:center;}
+.msg-quote{margin:14px 0 0; padding:18px 22px; border-left:4px solid var(--red); background:var(--mist); border-radius:0 14px 14px 0; font-size:17px; line-height:1.7; color:var(--ink); font-style:italic;}
+.msg-list{list-style:none; display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin:14px 0 0; padding:0;}
+.msg-list li{position:relative; padding-left:26px; color:var(--ink-soft); font-size:15.5px;}
+.msg-list li::before{content:"\2713"; position:absolute; left:0; color:var(--green); font-weight:700;}
+.msg-sign{margin-top:26px !important; padding-top:20px; border-top:1px solid var(--line); line-height:1.7 !important;}
+.msg-tag{font-family:var(--ff-head); font-weight:600; color:var(--green-deep) !important; text-align:center; font-size:17px !important;}
+.cycle{display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:8px; margin:16px 0 4px;}
+.cycle .chip{padding:7px 14px; border-radius:99px; background:var(--green); color:#fff; font-family:var(--ff-head); font-weight:600; font-size:13.5px;}
+.cycle .chip:last-child{background:var(--red);}
+.cycle .arrow{color:var(--ink-soft); font-weight:700;}
+@media(max-width:640px){.msg-body{padding:22px 20px 28px;} .msg-head{padding:18px 20px;} .msg-head img{width:60px; height:60px;} .msg-list{grid-template-columns:1fr;}}
