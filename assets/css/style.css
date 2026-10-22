@@ -693,3 +693,16 @@ footer ul li a.active{color:var(--red);}
 .cycle .chip:last-child{background:var(--red);}
 .cycle .arrow{color:var(--ink-soft); font-weight:700;}
 @media(max-width:640px){.msg-body{padding:22px 20px 28px;} .msg-head{padding:18px 20px;} .msg-head img{width:60px; height:60px;} .msg-list{grid-template-columns:1fr;}}
+
+
+/* ===== Share your experience (results page) ===== */
+.review-card{max-width:720px; margin:0 auto; background:#fff;}
+.hp-field{position:absolute; left:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;}
+.star-input{display:inline-flex; flex-direction:row-reverse; gap:4px;}
+.star-input input{position:absolute; opacity:0; width:1px; height:1px;}
+.star-input label{margin:0; font-size:34px; line-height:1; color:#d4d4d4; cursor:pointer; transition:color .15s, transform .15s;}
+.star-input label:hover, .star-input label:hover ~ label, .star-input input:checked ~ label{color:var(--red);}
+.star-input label:hover{transform:scale(1.12);}
+.star-input input:focus-visible + label{outline:2px solid var(--green); outline-offset:3px; border-radius:4px;}
+.field.invalid .star-input label{color:#f0b4b7;}
+@media(max-width:600px){.review-card{padding:24px;}}

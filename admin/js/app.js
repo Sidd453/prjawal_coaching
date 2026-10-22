@@ -6,6 +6,7 @@ import * as batches from './pages/batches.js';
 import * as attendance from './pages/attendance.js';
 import * as fees from './pages/fees.js';
 import * as enquiries from './pages/enquiries.js';
+import * as testimonials from './pages/testimonials.js';
 import * as staff from './pages/staff.js';
 import { session, can, canAny } from './session.js';
 
@@ -16,6 +17,7 @@ const routes = {
   attendance: { label: 'Attendance', icon: 'check', page: attendance, allow: () => can('attendance:view') },
   fees: { label: 'Fees', icon: 'rupee', page: fees, allow: () => canAny('fees:view', 'fees:dues') },
   enquiries: { label: 'Enquiries', icon: 'inbox', page: enquiries, allow: () => can('enquiries:view') },
+  testimonials: { label: 'Testimonials', icon: 'star', page: testimonials, allow: () => can('testimonials:view') },
   staff: { label: 'Staff & roles', icon: 'shield', page: staff, allow: () => can('users:view') },
 };
 const visibleRoutes = () => Object.entries(routes).filter(([, r]) => r.allow());

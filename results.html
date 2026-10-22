@@ -130,6 +130,58 @@
   </div>
 </section>
 
+<!-- ============ SHARE YOUR EXPERIENCE ============ -->
+<section id="share-review" style="background:var(--mist);">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;margin-left:auto;margin-right:auto;">
+      <span class="eyebrow green" style="justify-content:center;display:flex;">YOUR VOICE</span>
+      <h2>Share your experience</h2>
+      <p>Studied or have a child at PUCC? Tell us how it went. Your review goes live on this page right away.</p>
+    </div>
+    <div class="form-card review-card">
+      <form id="testimonialForm" novalidate>
+        <div class="row2">
+          <div class="field" data-field="name">
+            <label for="rvName">Your name</label>
+            <input id="rvName" name="name" type="text" maxlength="80" placeholder="e.g. Rohan Joshi">
+            <span class="err">Please enter your name.</span>
+          </div>
+          <div class="field">
+            <label for="rvRole">Class / relation <small style="font-weight:400;color:var(--ink-soft);">(optional)</small></label>
+            <input id="rvRole" name="role" type="text" maxlength="80" placeholder="e.g. Class 10 Student, or Parent of a Class 8 Student">
+          </div>
+        </div>
+        <div class="field" data-field="rating">
+          <label id="rvRatingLbl">Your rating</label>
+          <div class="star-input" role="radiogroup" aria-labelledby="rvRatingLbl">
+            <input type="radio" name="rating" id="rs5" value="5"><label for="rs5" title="5 stars">&#9733;</label>
+            <input type="radio" name="rating" id="rs4" value="4"><label for="rs4" title="4 stars">&#9733;</label>
+            <input type="radio" name="rating" id="rs3" value="3"><label for="rs3" title="3 stars">&#9733;</label>
+            <input type="radio" name="rating" id="rs2" value="2"><label for="rs2" title="2 stars">&#9733;</label>
+            <input type="radio" name="rating" id="rs1" value="1"><label for="rs1" title="1 star">&#9733;</label>
+          </div>
+          <span class="err">Please choose a rating.</span>
+        </div>
+        <div class="field" data-field="quote">
+          <label for="rvQuote">Your review</label>
+          <textarea id="rvQuote" name="quote" maxlength="600" placeholder="What did you like most about learning at PUCC?"></textarea>
+          <span class="err">Please write at least a short sentence (15 characters).</span>
+        </div>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="hp-field">
+        <button type="submit" class="submit-btn" id="testimonialBtn">
+          <span class="spinner"></span>
+          <span class="lbl">Submit Review</span>
+        </button>
+      </form>
+      <div class="form-success" id="testimonialSuccess">
+        <div class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h3>Thank you!</h3>
+        <p>Your review is now live in the testimonials above.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ CTA ============ -->
 <section style="background:var(--mist);">
   <div class="wrap">

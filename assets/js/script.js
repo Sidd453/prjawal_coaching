@@ -48,6 +48,47 @@ const io = new IntersectionObserver((entries)=>{
 }, {threshold:.1, rootMargin:'0px 0px 120px 0px'});
 document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));
 
+// ===== Testimonials from the backend (GET /api/testimonials) =====
+// The cards already in the HTML are a fallback. They are replaced only when the API answers with data.
+const TM_COLORS = ['linear-gradient(150deg,#E50914,#B4070F)','linear-gradient(150deg,#0a7a4e,#054228)','linear-gradient(150deg,#2b2b2b,#111111)'];
+const tmInitials = n => n.trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+function tmEl(tag, cls, text){ const e = document.createElement(tag); if(cls) e.className = cls; if(text != null) e.textContent = text; return e; }
+function tmStars(r){ return '\u2605'.repeat(r) + '\u2606'.repeat(5 - r); }
+
+function buildHomeCard(t, i){
+  const card = tmEl('article','tm-card');
+  const top = tmEl('div','tm-top');
+  const stars = tmEl('span','tm-stars', tmStars(t.rating)); stars.setAttribute('aria-label', t.rating + ' out of 5 stars');
+  top.appendChild(stars); if(t.tag) top.appendChild(tmEl('span','tm-tag', t.tag));
+  const who = tmEl('div','tm-who');
+  const av = tmEl('span','tm-av', tmInitials(t.name)); av.style.background = TM_COLORS[i % TM_COLORS.length];
+  const info = document.createElement('div'); info.appendChild(tmEl('b', null, t.name)); info.appendChild(tmEl('small', null, t.role));
+  who.appendChild(av); who.appendChild(info);
+  card.appendChild(top); card.appendChild(tmEl('p','tm-q', t.quote)); card.appendChild(who);
+  return card;
+}
+function buildResultsCard(t, i){
+  const card = tmEl('div','testi-card');
+  card.appendChild(tmEl('div','testi-stars', tmStars(t.rating)));
+  card.appendChild(tmEl('p','q', t.quote));
+  const who = tmEl('div','testi-who');
+  const av = tmEl('span','av', tmInitials(t.name)); av.style.background = TM_COLORS[i % TM_COLORS.length];
+  const info = document.createElement('div'); info.appendChild(tmEl('b', null, t.name)); info.appendChild(tmEl('small', null, t.role));
+  who.appendChild(av); who.appendChild(info);
+  card.appendChild(who);
+  return card;
+}
+// Resolves to an array of testimonials, or [] if the server is slow, down, or has none yet.
+function loadTestimonials(limit){
+  const ctrl = ('AbortController' in window) ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(()=>ctrl.abort(), 8000) : null;
+  return fetch((window.API_BASE || '') + '/api/testimonials?limit=' + (limit || 30), ctrl ? { signal: ctrl.signal } : undefined)
+    .then(r => r.ok ? r.json() : { data: [] })
+    .then(j => Array.isArray(j.data) ? j.data : [])
+    .catch(() => [])
+    .finally(() => { if(timer) clearTimeout(timer); });
+}
+
 // ===== Testimonial carousel =====
 const track = document.getElementById('testiTrack');
 if(track){
@@ -56,6 +97,11 @@ if(track){
   const tPrev = document.getElementById('tPrev');
   if(tNext) tNext.addEventListener('click', ()=> track.scrollBy({left:cardW(), behavior:'smooth'}));
   if(tPrev) tPrev.addEventListener('click', ()=> track.scrollBy({left:-cardW(), behavior:'smooth'}));
+  loadTestimonials(30).then(list=>{
+    if(!list.length) return;
+    track.replaceChildren(...list.map(buildResultsCard));
+    track.scrollLeft = 0;
+  });
 }
 
 // ===== Gallery (real photos) + lightbox =====
@@ -168,11 +214,16 @@ if(form){
 (function(){
   const track = document.getElementById('tmTrack');
   if(!track) return;
-  const originals = Array.from(track.children);
-  const N = originals.length;
-  for(let k=0;k<2;k++){
-    originals.forEach(c=>{ const cl = c.cloneNode(true); cl.setAttribute('aria-hidden','true'); track.appendChild(cl); });
+  let N = 0;
+  // Fills the track with the given cards plus two hidden copies, so the loop can wrap seamlessly.
+  function populate(cards){
+    track.replaceChildren(...cards);
+    N = cards.length;
+    for(let k=0;k<2;k++){
+      cards.forEach(c=>{ const cl = c.cloneNode(true); cl.setAttribute('aria-hidden','true'); track.appendChild(cl); });
+    }
   }
+  populate(Array.from(track.children));
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const SPEED = 0.045;            // px per ms  (~45px/sec) gentle, readable
   let setW = 0, pos = 0, paused = false, inView = true, resumeT = null, dragging = false;
@@ -196,6 +247,13 @@ if(form){
     clearTimeout(resumeT);
     resumeT = setTimeout(()=>{ if(dragging) return; pos = track.scrollLeft; paused = false; }, delay);
   }
+
+  // Swap in live testimonials from the backend when they arrive.
+  loadTestimonials(30).then(list=>{
+    if(!list.length) return;
+    populate(list.map(buildHomeCard));
+    setW = 0; measure(); track.scrollLeft = setW; pos = setW;
+  });
 
   window.addEventListener('load', ()=>{ measure(); track.scrollLeft = setW; pos = setW; });
   window.addEventListener('resize', measure);
@@ -260,4 +318,38 @@ if(form){
   const prev = document.getElementById('tmPrev'), next = document.getElementById('tmNext');
   if(next) next.addEventListener('click', ()=>{ pause(); track.scrollBy({left: step(),  behavior:'smooth'}); resume(2500); });
   if(prev) prev.addEventListener('click', ()=>{ pause(); track.scrollBy({left: -step(), behavior:'smooth'}); resume(2500); });
+})();
+
+
+// ===== Share your experience (POST /api/testimonials, goes live immediately) =====
+(function(){
+  const form = document.getElementById('testimonialForm');
+  if(!form) return;
+  const ok = document.getElementById('testimonialSuccess');
+  const btn = document.getElementById('testimonialBtn');
+  const setInvalid = (el, bad) => el.classList.toggle('invalid', bad);
+  form.addEventListener('submit', e=>{
+    e.preventDefault();
+    const name = form.elements.name.value.trim(), role = form.elements.role.value.trim(), quote = form.elements.quote.value.trim();
+    const rating = (form.querySelector('input[name="rating"]:checked') || {}).value;
+    const fName = form.querySelector('[data-field="name"]'), fQuote = form.querySelector('[data-field="quote"]'), fRating = form.querySelector('[data-field="rating"]');
+    setInvalid(fName, name.length < 2); setInvalid(fQuote, quote.length < 15); setInvalid(fRating, !rating);
+    if(name.length < 2 || quote.length < 15 || !rating) return;
+    btn.classList.add('loading'); btn.disabled = true;
+    fetch((window.API_BASE || '') + '/api/testimonials', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, role, quote, rating: Number(rating), website: form.elements.website.value })
+    })
+      .then(async res=>{
+        const data = await res.json().catch(()=>({}));
+        if(!res.ok) throw new Error(data.message || 'Could not send your review.');
+        form.style.display = 'none'; ok.classList.add('show');
+        // show the new review in the carousel straight away
+        const tr = document.getElementById('testiTrack');
+        if(tr) loadTestimonials(30).then(list=>{ if(list.length){ tr.replaceChildren(...list.map(buildResultsCard)); tr.scrollLeft = 0; } });
+      })
+      .catch(err=>{ alert(err.message + ' Please try again in a moment.'); })
+      .finally(()=>{ btn.classList.remove('loading'); btn.disabled = false; });
+  });
 })();

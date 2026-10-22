@@ -67,5 +67,6 @@ const ICONS = {
   rupee: 'M7 5h10M7 9h10M7 13h4a4 4 0 000-8M9 13l7 7',
   inbox: 'M4 13l2-8h12l2 8v6H4zM4 13h5a3 3 0 006 0h5',
   shield: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z',
+  star: 'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z',
 };
 export const icon = (n) => raw(`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[n]}"/></svg>`);
