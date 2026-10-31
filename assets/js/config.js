@@ -8,4 +8,10 @@
   var p = location.port;
   var sameServer = /\.onrender\.com$/.test(h) || ((h === 'localhost' || h === '127.0.0.1') && p === '5000');
   window.API_BASE = sameServer ? '' : RENDER_URL;
+
+  // Wake the (free-tier) Render server as soon as any page opens, so it is ready by the time the visitor
+  // fills in the enquiry form. Failures are ignored on purpose.
+  try {
+    fetch(window.API_BASE + '/api/health', { cache: 'no-store' }).catch(function () {});
+  } catch (e) {}
 })();

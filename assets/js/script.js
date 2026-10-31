@@ -179,7 +179,7 @@ if(form){
     setInvalid(fName, name.length < 2); if(name.length<2) valid=false;
     const phoneOk = /^[0-9+\-\s]{7,15}$/.test(phone);
     setInvalid(fPhone, !phoneOk); if(!phoneOk) valid=false;
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const emailOk = email === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);  // email is optional
     setInvalid(fEmail, !emailOk); if(!emailOk) valid=false;
     setInvalid(fCourse, course === ''); if(course==='') valid=false;
     setInvalid(fMessage, message.length < 5); if(message.length<5) valid=false;
@@ -188,25 +188,76 @@ if(form){
 
     submitBtn.classList.add('loading');
     submitBtn.disabled = true;
-    // API_BASE is empty when the site is served by the backend; set window.API_BASE in a <script> for a separate host.
+    const statusEl = ensureStatus();
+    showStatus('Sending your enquiry...');
+
+    // The backend is on a free Render server that sleeps when idle, so the first request can take 30-60 seconds.
+    // We wake it, then retry a few times instead of failing on the first slow or dropped connection.
     const API_BASE = window.API_BASE || '';
-    fetch(API_BASE + '/api/enquiries', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, email, course, message })
+    const payload = JSON.stringify({ name, phone, email, course, message });
+
+    sendEnquiry(API_BASE + '/api/enquiries', payload, (attempt) => {
+      if(attempt > 1) showStatus('Server is waking up, please wait a few seconds... (try ' + attempt + ' of 4)');
     })
-      .then(async (res) => {
-        const data = await res.json().catch(() => ({}));
-        if(!res.ok) throw new Error(data.message || 'Could not send your enquiry.');
+      .then(() => {
         form.style.display = 'none';
         successBox.classList.add('show');
       })
-      .catch((err) => { alert(err.message + ' Please try again or call us.'); })
+      .catch((err) => {
+        showStatus(err.message, true);
+      })
       .finally(() => {
         submitBtn.classList.remove('loading');
         submitBtn.disabled = false;
       });
+
+    function ensureStatus(){
+      let el = document.getElementById('formStatus');
+      if(!el){
+        el = document.createElement('p');
+        el.id = 'formStatus';
+        el.setAttribute('role', 'status');
+        el.style.cssText = 'margin:12px 0 0;font-size:14px;line-height:1.5;';
+        submitBtn.insertAdjacentElement('afterend', el);
+      }
+      return el;
+    }
+    function showStatus(msg, isError){
+      statusEl.textContent = msg;
+      statusEl.style.color = isError ? '#b00020' : '#555';
+    }
   });
+
+  // POST with a timeout and automatic retry. Network errors, timeouts and 5xx are retried; 4xx (bad input) is not.
+  async function sendEnquiry(url, body, onAttempt){
+    const MAX = 4;
+    let lastMsg = '';
+    for(let attempt = 1; attempt <= MAX; attempt++){
+      if(onAttempt) onAttempt(attempt);
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 35000);
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          signal: ctrl.signal
+        });
+        clearTimeout(timer);
+        const data = await res.json().catch(() => ({}));
+        if(res.ok) return data;
+        if(res.status === 429) throw Object.assign(new Error(data.message || 'Too many attempts. Please try again in a few minutes, or call us.'), { final: true });
+        if(res.status >= 400 && res.status < 500) throw Object.assign(new Error(data.message || 'Please check the details and try again.'), { final: true });
+        lastMsg = 'The server is busy.';
+      } catch(err) {
+        clearTimeout(timer);
+        if(err.final) throw err;
+        lastMsg = 'Could not reach the server.';
+      }
+      if(attempt < MAX) await new Promise(r => setTimeout(r, 3000 * attempt));
+    }
+    throw new Error(lastMsg + ' Please check your internet and try again, or call us.');
+  }
 }
 
 
